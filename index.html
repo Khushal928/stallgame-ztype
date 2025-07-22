@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ZType – Typing Game - Type to Shoot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    
+    <link rel="shortcut icon" href="media/favicon.png" type="image/png">
+    <link rel="icon" href="media/favicon.png" type="image/png">
+    <style type="text/css">
+        html, body {
+            background-color: #000;
+            background-image: url(media/background/page.png);
+            color: #555;
+            font-family: helvetica, arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            overflow: hidden; /* Prevents scrollbars */
+        }
+        a {
+            color: #777;
+            text-decoration: none;
+        }
+        a:hover {
+            color: #ccc;
+        }
+        
+        #ztype-game-canvas {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            border: 0;
+            z-index: 1; /* Base layer */
+            box-shadow: 0 0 30px #000;
+        }
+
+        #name-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 99999; /* Highest layer */
+            color: white;
+            font-family: monospace;
+            text-align: center;
+            
+            /* Flexbox to center the form */
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+
+        #name-form {
+            padding: 25px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+        }
+
+        #name-form input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            margin: 15px 0;
+            color: #000; /* Make input text black */
+        }
+        #name-form button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #0088ff;
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="ztype-game-canvas"></canvas>
+
+    <div id="name-form-overlay">
+        <div id="name-form">
+            <h2>Enter Your Name</h2>
+            <input type="text" id="playerNameInput" placeholder="Player" maxlength="15" autofocus/>
+            <button id="startGameBtn">Start Game</button>
+        </div>
+    </div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <script type="text/javascript" src="ztype.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="ztype-trainer.js" charset="UTF-8"></script>
+
+    <script>
+        (function () {
+            const navEntries = performance.getEntriesByType("navigation");
+            if (navEntries.length > 0 && navEntries[0].type === 'back_forward') {
+                window.location.reload();
+            }
+        })();
+    </script>
+
+</body>
+</html>
