@@ -1,14 +1,24 @@
 /*! Built with IMPACT - impactjs.com */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBlDsjqlDfWCP32yGt8OmbO4g5wtxXv2dg",
-  authDomain: "ztype-leaderboard-backend.firebaseapp.com",
-  projectId: "ztype-leaderboard-backend",
-  storageBucket: "ztype-leaderboard-backend.appspot.com",
-  messagingSenderId: "667807302055",
-  appId: "1:667807302055:web:7406a22685c5c54f3db682",
-  measurementId: "G-3PBFQTC2V1"
+
+  apiKey: "AIzaSyDdlB2tEp3IPKHi0omoNSYRR720ycEOET8",
+
+  authDomain: "leaderboard-6a7a6.firebaseapp.com",
+
+  projectId: "leaderboard-6a7a6",
+
+  storageBucket: "leaderboard-6a7a6.firebasestorage.app",
+
+  messagingSenderId: "329400579144",
+
+  appId: "1:329400579144:web:0cde884ea0abfcc617147d",
+
+  measurementId: "G-3Y5QLDEFGQ"
+
 };
+
+
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore(); 
@@ -2799,7 +2809,7 @@ ig.module('game.menus.base').requires('impact.font').defines(function() {
             return 'back to title';
         },
         ok: function() {
-            ig.game.setTitle();
+            window.location.reload();
         }
     });
     Menu = ig.Class.extend({
@@ -3250,6 +3260,8 @@ ig.module('game.menus.game-over').requires('game.menus.base', 'game.menus.inters
     });
 
     function sendScoreToServer() {
+        console.log("wpm stopped");
+        ig.game.pauseWPM()
         const playerName = localStorage.getItem('playerName');
         const score = localStorage.getItem('score');
         const wave = localStorage.getItem('wave');
@@ -3282,6 +3294,8 @@ ig.module('game.menus.game-over').requires('game.menus.base', 'game.menus.inters
         fontTitle: new ig.Font('media/fonts/avenir-36-blue.png'),
         separatorBar: new ig.Image('media/ui/bar-blue.png'),
         init: function() {
+            ig.game.pauseWPM();
+
             localStorage.setItem('playerName', ig.game.playerName);
             localStorage.setItem('score', ig.game.score);
             localStorage.setItem('wave', ig.game.wave.wave);
@@ -3290,7 +3304,7 @@ ig.module('game.menus.game-over').requires('game.menus.base', 'game.menus.inters
 
             setTimeout(function() {
                 window.location.reload(); 
-            }, 15000); 
+            }, 10000); 
 
 
             var lastBannerTime = parseInt(localStorage.getItem('bannerTime')) || 0;
@@ -3318,7 +3332,7 @@ ig.module('game.menus.game-over').requires('game.menus.base', 'game.menus.inters
                 ctx.save();
                 ctx.scale(0.5, 0.5);
                 this.personalBestBadge.draw(24 / 0.5, 275 / 0.5);
-                this.font.draw('NEW PERSONAL BEST', 60 / 0.5, 280 / 0.5, ig.Font.ALIGN.LEFT);
+                this.font.draw('NEW BEST', 60 / 0.5, 280 / 0.5, ig.Font.ALIGN.LEFT);
                 ctx.restore();
             }
             var ss = 0.5;
@@ -3328,18 +3342,26 @@ ig.module('game.menus.game-over').requires('game.menus.base', 'game.menus.inters
             this.font.draw('FINAL SCORE', 24 / ss, (ys + 0) / ss);
             this.font.draw('YOU REACHED', 252 / ss, (ys + 0) / ss);
             this.font.draw('ACCURACY', 24 / ss, (ys + 140) / ss);
-            this.font.draw('LONGEST STREAK', 252 / ss, (ys + 140) / ss);
+            this.font.draw('WPM', 252 / ss, (ys + 140) / ss);
+
+            
             ctx.restore();
             this.fontTitle.draw(ig.game.score.zeroFill(6), 24, ys + 25);
             this.fontTitle.draw('WAVE ' + ig.game.wave.wave.zeroFill(3), 252, ys + 25);
             ig.system.context.drawImage(this.separatorBar.data, 24, ys + 70, 432, 2);
             this.fontTitle.draw(acc.round(1) + '%', 24, ys + 165);
-            this.fontTitle.draw(ig.game.longestStreak, 252, ys + 165);
+            this.fontTitle.draw(localStorage.getItem("lastWPM"), 252, ys + 165);
             ig.system.context.drawImage(this.separatorBar.data, 24, ys + 210, 432, 2);
             if (this.stats) {
                 this.stats.draw(24, ys + 300);
             }
-        }
+            this.fontTitle.draw(
+                "Game will restart in 10s...",
+                ig.system.width / 2,
+                ys + 400, 
+                ig.Font.ALIGN.CENTER
+            );
+                    }
     });
 });
 
@@ -3694,33 +3716,19 @@ ig.baked = true;
 ig.module('game.menus.title').requires('game.menus.base', 'game.menus.detailed-stats', 'game.ease').defines(function() {
     MenuItemNormalMode = MenuItem.extend({
         getText: function() {
-            return 'new game';
+            return 'Play Ztype';
         },
         ok: function() {
             ig.game.menu = new MenuEnterName();        },
     });
-    MenuItemOnlineVersion = MenuItem.extend({
-        getText: function() {
-            return 'online version';
-        },
-        ok: function() {
-            window.location.href='http://zty.pe/';
-        },
-    });
-    MenuItemAboutTrainer = MenuItem.extend({
-        getText: function() {
-            return 'about trainer';
-        },
-        ok: function() {
-            window.location.href='https://github.com/KevinWang15/ztype-trainer';
-        },
-    });
+
+
     MenuTitle = Menu.extend({
         itemClasses: [],
         scale: 0.75,
         y: 0,
         init: function() {
-            this.itemClasses = [MenuItemNormalMode,MenuItemOnlineVersion,MenuItemAboutTrainer];
+            this.itemClasses = [MenuItemNormalMode];
             
             this.parent();
             this.items[0].y = 740;
@@ -4247,6 +4255,7 @@ ig.module('game.entities.enemy').requires('impact.entity', 'impact.font', 'game.
         isHitBy: function(letter) {
             var expected = ig.game.translateUmlaut(this.remainingWord.charAt(0).toLowerCase());
             if (expected == letter.toLowerCase()) {
+                ig.game.registerHit();
                 this.remainingWord = this.remainingWord.substr(1);
                 if (this.remainingWord.length == 0) {
                     ig.game.currentTarget = null ;
@@ -5200,13 +5209,13 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
             window.addEventListener('keydown', this.keydown.bind(this), false);
             this.keyboard = new ig.Keyboard(this.virtualKeydown.bind(this));
             ig.input.bind(ig.KEY.ENTER, 'ok');
-            ig.input.bind(ig.KEY.SPACE, 'ok');
             ig.input.bind(ig.KEY.MOUSE1, 'click');
             ig.input.bind(ig.KEY.ESC, 'menu');
             ig.input.bind(ig.KEY.UP_ARROW, 'up');
             ig.input.bind(ig.KEY.DOWN_ARROW, 'down');
             ig.input.bind(ig.KEY.LEFT_ARROW, 'left');
             ig.input.bind(ig.KEY.RIGHT_ARROW, 'right');
+     
             ig.system.canvas.onclick = function() {
                 window.focus();
             }
@@ -5264,6 +5273,9 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
             this.waveEndTimer = null ;
         },
         nextWave: function() {
+            console.log("going to wave " + (this.wave.wave + 1));
+            ig.game.resumeWPM()
+
             this.wave.wave++;
             this.wave.spawnWait = (this.wave.spawnWait * 0.97).limit(0.2, 1);
             this.wave.currentSpawnWait = this.wave.spawnWait;
@@ -5333,11 +5345,13 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
         spawnCurrentWave: function() {
             if (!this.wave.spawn.length) {
                 if (this.entities.length <= 1 && !this.waveEndTimer) {
+                    ig.game.pauseWPM();
                     this.waveEndTimer = new ig.Timer(2);
-                } 
+                }
                 else if (this.waveEndTimer && this.waveEndTimer.delta() > 0) {
-                    this.waveEndTimer = null ;
+                    this.waveEndTimer = null;
                     this.nextWave();
+                    ig.game.resumeWPM();
                 }
             } 
             else if (this.spawnTimer.delta() > this.wave.currentSpawnWait) {
@@ -5546,7 +5560,7 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
             this.nextWave();
             ig.music.next();
             this.spawnSound.play();
-            this.emps = 3;
+            this.emps = 4;
         },
         setGameOver: function() {
             if (this.score > this.personalBest) {
@@ -5609,7 +5623,8 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
                     this.setGame();
                 } 
                 else if ((this.mode === ZType.MODE.GAME_OVER && this.menu && this.menu.timer.delta() > 1.5) || this.mode !== ZType.MODE.GAME_OVER) {
-                    this.setTitle();
+                    console.log("Reloading…");
+                    window.location.reload();
                 }
             }
             var scrollSpeed = 100;
@@ -5760,8 +5775,52 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
                 }
                 ig.game.setTitle();
             });
-        }
-    });
+        },
+            startTime: null,
+            correctChars: 0,
+
+            registerHit: function() {
+                if (!this.startTime) {
+                    this.startTime = ig.Timer.time;
+                }
+                this.correctChars++;
+                this.logWPM();
+            },
+
+            logWPM: function() {
+                var minutes = (ig.Timer.time - this.startTime) / 60;
+                if (minutes <= 0) return;
+                var wpm = Math.round((this.correctChars / 5) / minutes);
+                this.lastWPM = wpm;
+                localStorage.setItem('lastWPM', wpm);
+                console.log("WPM:", wpm);
+            },
+               gravity: 0,
+                    startTime: null,
+                    correctChars: 0,
+                    pausedTime: 0,
+                    pauseStart: null,
+
+                    pauseWPM: function() {
+                        console.log("Pausing WPM tracking");
+                        if (!this.pauseStart) {
+                            this.pauseStart = ig.Timer.time;
+                        }
+                    },
+
+                    resumeWPM: function() {
+                        console.log("Resuming WPM tracking");
+                        if (this.pauseStart) {
+                            this.pausedTime += (ig.Timer.time - this.pauseStart);
+                            this.pauseStart = null;
+                        }
+                    },
+                   
+            });
+
+            
+
+
     ZType.MODE = {
         TITLE: 0,
         GAME: 1,
@@ -5892,11 +5951,13 @@ window.addEventListener('load', function() {
         ig.game.setGame(); // Start the game
     };
 
-    // Add listeners for both click and pressing Enter in the input field
     startGameButton.addEventListener('click', handleStart);
     nameInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            handleStart();
-        }
-    });
+    if (e.key === 'Enter') {
+        e.stopPropagation();   // prevent Impact from seeing it
+        e.preventDefault();    // block default form submit if any
+        window.location.reload();
+    }
+});
+
 });
