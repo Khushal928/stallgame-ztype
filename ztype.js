@@ -5275,6 +5275,7 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
         nextWave: function() {
             console.log("going to wave " + (this.wave.wave + 1));
             ig.game.resumeWPM()
+            this.logWPM();
 
             this.wave.wave++;
             this.wave.spawnWait = (this.wave.spawnWait * 0.97).limit(0.2, 1);
@@ -5720,10 +5721,12 @@ ig.module('game.main').requires('impact.game', 'impact.font', 'game.menus.about'
                 var a = d > 1.7 ? d.map(2, 1.7, 0, 1) : d < 1 ? d.map(1, 0, 1, 0) : 1;
                 var ys = 276 + (d < 1 ? Math.cos(1 - d).map(1, 0, 0, 250) : 0);
                 var w = this.wave.wave.zeroFill(3);
+                var currentWPM = localStorage.getItem('lastWPM') || '0';
                 ig.system.context.globalAlpha = a;
                 this.fontTitle.draw('WAVE ' + w + ' CLEAR', 32, ys, ig.Font.ALIGN.LEFT);
                 ig.system.context.drawImage(this.separatorBar.data, 32, ys + 48, 276, 2);
                 this.font.draw('SCORE: ' + this.score.zeroFill(6), 32, (ys * 1.2) + 10, ig.Font.ALIGN.LEFT);
+                this.font.draw('WPM: ' + currentWPM, 32, (ys * 1.2) + 35, ig.Font.ALIGN.LEFT);
                 ig.system.context.globalAlpha = 1;
             }
             if (!ig.ua.mobile && this.idleTimer.delta() > 8) {
